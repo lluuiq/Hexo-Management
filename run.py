@@ -265,7 +265,11 @@ class Window():
 
     def newPost(self):
         title = self.window.lineEdit_post_title.text()
-        print(title)
+        thread_newPost = QThread()
+        self.hexoCmd("hexo new " + '\"' + title + '\"', thread_newPost)
+
+    def modifyPost(self):
+
 
     # 清除输出信息
     def clear(self):
@@ -278,4 +282,5 @@ if __name__ == '__main__':
 
     stats = Window()
     stats.window.show()
+    stats.window.tableWidget_post.
     sys.exit(app.exec_())
