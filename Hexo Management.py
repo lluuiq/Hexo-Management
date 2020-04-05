@@ -1,9 +1,10 @@
 # !/usr/bin/env python3
 # _*_coding:utf-8 _*_
 # @Author : lluuiq
-# @File : run.py.py
+# @File : Hexo Management.py
 # @project : Hexo-Management
 # @Time : 2020/4/3 12:13
+import gc
 import shutil
 import sys
 from PyQt5.QtWidgets import *
@@ -24,25 +25,21 @@ class Window():
         self.settings = QSettings("config.ini", QSettings.IniFormat)
 
         #################### 初始化 ####################
-        self.blog_root = "None"
-        self.post_path = "None"
-        self.draft_path = "None"
-        # self.username = "None"
-        # self.password = "None"
-        self.git_path = "None"
-        self.branch = "None"
+        # 若根目录本来是空，则以当前路径为根目录
+        if not self.settings.value("blog_root").strip():
+            self.blog_root = os.getcwd().replace("\\", '/')
+            self.settings.setValue("blog_root", self.blog_root)
+
+        # 执行设置初始化函数
         self.initInfo()
 
         '''创建hexo server的线程与锁'''
         self.thread_server = QThread()
         self.mutex = QMutex()
 
-        '''更新文章目录'''
-        self.updataTable(self.post_path, self.window.tableWidget_post)
-        self.updataTable(self.draft_path, self.window.tableWidget_draft)
-
-        ''' 更改os目录 '''
-        os.chdir(self.blog_root)
+        if os.path.exists(self.blog_root + '/source'):
+            self.updataTable(self.post_path, self.window.tableWidget_post)
+            self.updataTable(self.draft_path, self.window.tableWidget_draft)
 
         '''关闭登录功能'''
         self.window.lineEdit_username.setDisabled(True)
@@ -81,36 +78,34 @@ class Window():
     def initInfo(self):
         # 初始化路径
         self.blog_root = self.settings.value("blog_root")
-        self.post_path = self.blog_root + "/source/_posts"
-        self.draft_path = self.blog_root + "/source/_drafts"
-
-        self.git_path = self.settings.value("git_path")
-        self.branch = self.settings.value("branch")
-        self.message = self.settings.value("message")
-        # self.username = self.settings.value("username")
-        # self.password = self.settings.value("password")
-
         self.window.label_blog_root.setText(self.blog_root)
-        # self.window.label_username.setText(self.username)
-        # self.window.label_password.setText(self.password)
-        self.window.lineEdit_git_path.setText(self.git_path)
-        self.window.lineEdit_branch.setText(self.branch)
-        self.window.lineEdit_message.setText(self.message)
-
         os.chdir(self.blog_root)
         self.window.plainTextEdit.appendPlainText(
             "=" * 100 + "\n" + "当前博客根目录为: " + os.getcwd() + "\n" + "=" * 100
         )
+
+        self.post_path = self.blog_root + "/source/_posts"
+        self.draft_path = self.blog_root + "/source/_drafts"
+
+        # 初始化备份信息
+        self.git_path = self.settings.value("git_path")
+        self.branch = self.settings.value("branch")
+        self.message = self.settings.value("message")
+        self.window.lineEdit_git_path.setText(self.git_path)
+        self.window.lineEdit_branch.setText(self.branch)
+        self.window.lineEdit_message.setText(self.message)
 
     # 获取博客根目录
     def getBlogRoot(self):
         def threadRun(args):
             # # 获取路径
             blog_root = QFileDialog.getExistingDirectory(self.window,
-                                                         "选取博客根目录", "D:/")  # 起始路径
+                                                         "选取博客根目录", self.blog_root)  # 起始路径
             if blog_root.strip():
                 if blog_root != self.blog_root:
                     self.blog_root = blog_root
+                    self.post_path = self.blog_root + '/source/_posts'
+                    self.draft_path = self.blog_root + '/source/_drafts'
                     # 更改标签路径
                     self.window.label_blog_root.setText(self.blog_root)
                     # 更改os目录
@@ -119,6 +114,10 @@ class Window():
                     self.settings.setValue("blog_root", self.window.label_blog_root.text())
                     # 输出路径
                     self.window.plainTextEdit.appendPlainText("更改博客根目录为: " + os.getcwd())
+                    # 更新文章列表
+                    if os.path.exists(self.blog_root + '/source'):
+                        self.updataTable(self.post_path, self.window.tableWidget_post)
+                        self.updataTable(self.draft_path, self.window.tableWidget_draft)
 
         thread_getBlogRoot = QThread()
         thread_getBlogRoot.run = types.MethodType(threadRun, thread_getBlogRoot)
@@ -310,13 +309,16 @@ class Window():
         def threadRun(args):
             # 获取标题
             title = self.window.lineEdit_post_title.text()
-
-            # 执行hexo指令，创建文章
-            thread = QThread()
-            self.Cmd("hexo new " + '\"' + title + '\"', thread)
-            # 等待线程结束，更新table
-            thread.wait()
-            self.updataTable(self.post_path, self.window.tableWidget_post)
+            if not title.strip():
+                self.window.plainTextEdit.appendPlainText("标题不能为空")
+            else:
+                # 执行hexo指令，创建文章
+                thread = QThread()
+                self.Cmd("hexo new " + '\"' + title + '\"', thread)
+                # 等待线程结束，更新table
+                thread.wait()
+                self.updataTable(self.post_path, self.window.tableWidget_post)
+                self.window.plainTextEdit.appendPlainText(title + ' 创建完成')
 
         thread_newPost = QThread()
         thread_newPost.run = types.MethodType(threadRun, thread_newPost)
@@ -363,10 +365,14 @@ class Window():
         def threadRun(args):
             # 获取标题
             title = self.window.lineEdit_draft_title.text()
+            if not title.strip():
+                self.window.plainTextEdit.appendPlainText('标题不能为空')
+                return
             thread = QThread()
             self.Cmd("hexo new draft " + '\"' + title + '\"', thread)
             thread.wait()
             self.updataTable(self.draft_path, self.window.tableWidget_draft)
+            self.window.plainTextEdit.appendPlainText(title + ' 创建完成')
 
         thread_newDraft = QThread()
         thread_newDraft.run = types.MethodType(threadRun, thread_newDraft)
