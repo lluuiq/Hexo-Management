@@ -87,7 +87,7 @@ QListWidget {
 </string>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="page_post">
       <property name="minimumSize">
@@ -183,16 +183,6 @@ QListWidget {
        <attribute name="verticalHeaderHighlightSections">
         <bool>false</bool>
        </attribute>
-       <row>
-        <property name="text">
-         <string>1</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>2</string>
-        </property>
-       </row>
        <column>
         <property name="text">
          <string>博文名称</string>
@@ -208,36 +198,6 @@ QListWidget {
          <string>最后修改时间</string>
         </property>
        </column>
-       <item row="0" column="0">
-        <property name="text">
-         <string>2</string>
-        </property>
-       </item>
-       <item row="0" column="1">
-        <property name="text">
-         <string>3</string>
-        </property>
-       </item>
-       <item row="0" column="2">
-        <property name="text">
-         <string>4</string>
-        </property>
-       </item>
-       <item row="1" column="0">
-        <property name="text">
-         <string>3</string>
-        </property>
-       </item>
-       <item row="1" column="1">
-        <property name="text">
-         <string>4</string>
-        </property>
-       </item>
-       <item row="1" column="2">
-        <property name="text">
-         <string>5</string>
-        </property>
-       </item>
       </widget>
       <widget class="Line" name="line_2">
        <property name="geometry">
@@ -444,16 +404,6 @@ QListWidget {
        <attribute name="verticalHeaderHighlightSections">
         <bool>false</bool>
        </attribute>
-       <row>
-        <property name="text">
-         <string>1</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>2</string>
-        </property>
-       </row>
        <column>
         <property name="text">
          <string>草稿名称</string>
@@ -469,36 +419,6 @@ QListWidget {
          <string>最后修改时间</string>
         </property>
        </column>
-       <item row="0" column="0">
-        <property name="text">
-         <string>2</string>
-        </property>
-       </item>
-       <item row="0" column="1">
-        <property name="text">
-         <string>3</string>
-        </property>
-       </item>
-       <item row="0" column="2">
-        <property name="text">
-         <string>4</string>
-        </property>
-       </item>
-       <item row="1" column="0">
-        <property name="text">
-         <string>3</string>
-        </property>
-       </item>
-       <item row="1" column="1">
-        <property name="text">
-         <string>4</string>
-        </property>
-       </item>
-       <item row="1" column="2">
-        <property name="text">
-         <string>5</string>
-        </property>
-       </item>
       </widget>
       <widget class="Line" name="line_3">
        <property name="geometry">
@@ -1019,72 +939,29 @@ QListWidget {
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_2">
               <item>
-               <widget class="QLineEdit" name="lineEdit_blog_root">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QToolButton" name="toolButton_blog_root">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
-              </item>
-              <item>
                <widget class="QPushButton" name="pushButton_blog_root">
-                <property name="text">
-                 <string>确定</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_4">
-              <item>
-               <widget class="QLabel" name="label_8">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="font">
-                 <font>
-                  <family>宋体</family>
-                  <pointsize>12</pointsize>
-                 </font>
-                </property>
                 <property name="text">
-                 <string>当前博客根目录路径为：</string>
+                 <string>选择博客根目录</string>
                 </property>
                </widget>
               </item>
               <item>
-               <spacer name="verticalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+               <widget class="QLabel" name="label_8">
+                <property name="text">
+                 <string>当前博客路径为：</string>
                 </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Fixed</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>10</width>
-                  <height>10</height>
-                 </size>
-                </property>
-               </spacer>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="label_blog_root">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -1101,6 +978,9 @@ QListWidget {
                </widget>
               </item>
              </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_4"/>
             </item>
            </layout>
           </item>
